@@ -10,7 +10,7 @@ using namespace godot;
 #include "core/io/resource_loader.h"
 #endif
 
-class tsf;
+struct tsf;
 
 class AudioStreamPlaybackMIDISF2;
 
@@ -56,8 +56,8 @@ public:
 	virtual String _get_resource_type(const String &p_path) const override;
 #else
 	virtual Ref<Resource> load(const String &p_path, const String &p_original_path = "", Error *r_error = nullptr, bool p_use_sub_threads = false, float *r_progress = nullptr, CacheMode p_cache_mode = CACHE_MODE_REUSE) override;
-	virtual void get_recognized_extensions(List<String> *r_extensions) const;
-	virtual bool handles_type(const String &p_type) const;
-	virtual String get_resource_type(const String &p_path) const;
+	virtual void get_recognized_extensions(List<String> *r_extensions) const override;
+	virtual bool handles_type(const String &p_type) const override;
+	virtual String get_resource_type(const String &p_path) const override;
 #endif
 };

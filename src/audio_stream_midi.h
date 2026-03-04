@@ -21,9 +21,6 @@ using namespace godot;
 #include "soundfont2.h"
 #include "midi.h"
 
-struct tsf;
-struct tml_message;
-
 class AudioStreamMIDI;
 
 class AudioStreamPlaybackMIDISF2 : public AudioStreamPlayback {
