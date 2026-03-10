@@ -8,10 +8,8 @@ using namespace godot;
 #include "core/object/class_db.h"
 #include "core/io/resource_loader.h"
 #include "core/io/file_access.h"
-#include "core/variant/typed_array.h"
 #include "core/error/error_macros.h"
 #include "core/io/file_access.h"
-#include "core/variant/typed_dictionary.h"
 
 #endif
 #include "tsf_impl.h"

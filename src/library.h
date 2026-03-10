@@ -5,6 +5,7 @@ using namespace godot;
 #else
 #include "modules/register_module_types.h"
 #include "core/io/resource_loader.h"
+#include "core/object/class_db.h"
 #endif
 
 #include "audio_stream_midi.h"
@@ -14,7 +15,7 @@ using namespace godot;
 static Ref<ResourceFormatLoaderMIDI> resource_loader_midi;
 static Ref<ResourceFormatLoaderSoundFont> resource_loader_soundfont;
 
-void initialize_library_midi(ModuleInitializationLevel p_level) {
+inline void initialize_library_midi(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
@@ -41,7 +42,7 @@ void initialize_library_midi(ModuleInitializationLevel p_level) {
 #endif
 }
 
-void uninitialize_library_midi(ModuleInitializationLevel p_level) {
+inline void uninitialize_library_midi(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}

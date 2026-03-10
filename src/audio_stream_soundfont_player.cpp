@@ -4,6 +4,7 @@
 using namespace godot;
 #else
 #include "core/error/error_macros.h"
+#include "core/object/class_db.h"
 #endif
 
 #include "../thirdparty/tinysoundfont/tsf.h"
