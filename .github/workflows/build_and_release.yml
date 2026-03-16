@@ -131,6 +131,10 @@ jobs:
           path: project/addons/godot-midi/bin/windows/
           merge-multiple: true
 
+      - name: Remove non-addons files
+        run: |
+          find project -mindepth 1 -maxdepth 1 ! -name "addons" -exec rm -rf {} \;
+          
       - name: Upload universal release zip
         uses: actions/upload-artifact@v4
         with:
