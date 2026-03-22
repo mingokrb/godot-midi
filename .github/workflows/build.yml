@@ -85,8 +85,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y \
+          sudo apt-get update
+          sudo apt-get install -y \
             build-essential \
             scons \
             pkg-config \
@@ -99,14 +99,16 @@ jobs:
             libasound2-dev \
             libpulse-dev \
             libvulkan-dev \
-            glslc \
-            android-sdk
+            glslc
 
-      - name: Setup Android and install NDK
+      - name: Setup and install Android NDK
         run: |
-           #sed -i "s/sys.platform.startswith(\"linux\")/sys.platform.startswith(\"linux\") or sys.platform == \"android\"/" godot-cpp/tools/android.py
-           mkdir -p Android/Sdk && export ANDROID_HOME=Android/Sdk
-           yes | sdkmanager --licenses && sdkmanager --install "ndk;r23c"
+          mkdir -p Android/Sdk/cmdline-tools && export ANDROID_HOME=Android/Sdk
+          wget https://dl.google.com/android/repository/commandlinetools-linux-14742923_latest.zip
+          unzip commandlinetools-linux-14742923_latest.zip -d $ANDROID_HOME/cmdline-tools/latest
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+
+          yes | sdkmanager --licenses && sdkmanager --install "ndk;r23c"
 
       - name: Build GDExtension
         run: |
