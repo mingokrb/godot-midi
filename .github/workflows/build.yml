@@ -103,7 +103,8 @@ jobs:
 
       - name: Setup and install Android NDK
         run: |
-          mkdir -p Android/Sdk/cmdline-tools && export ANDROID_HOME=Android/Sdk
+          realpath $ANDROID_HOME
+          mkdir $ANDROID_HOME/cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-14742923_latest.zip && unzip commandlinetools-linux-14742923_latest.zip
           mv cmdline-tools $ANDROID_HOME/cmdline-tools/latest
           export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
