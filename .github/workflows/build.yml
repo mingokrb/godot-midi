@@ -1,6 +1,12 @@
-name: Build and Release
+name: Build
 
 on:
+  push:
+    branches: [master, main]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [master, main]
   workflow_dispatch:
 
 jobs:
@@ -55,6 +61,68 @@ jobs:
           path: project/addons/godot-midi/bin/linux/
           if-no-files-found: error
 
+  build_android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: template_debug
+            arch: arm64
+          - target: template_release
+            arch: arm64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Clone godot-cpp
+        run: |
+          git clone --depth 1 --branch 4.4 https://github.com/godotengine/godot-cpp.git godot-cpp
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential \
+            scons \
+            pkg-config \
+            libx11-dev \
+            libxcursor-dev \
+            libxinerama-dev \
+            libxrandr-dev \
+            libxi-dev \
+            libgl1-mesa-dev \
+            libasound2-dev \
+            libpulse-dev \
+            libvulkan-dev \
+            glslc \
+            android-sdk
+
+      - name: Setup Android and install NDK
+        run: |
+           GCPP_ANDROID_PY=godot-cpp/tools/android.py
+           echo "${$(<$GCPP_ANDROID_PY)//sys.platform.startswith(\"linux\"):/sys.platform.startswith(\"linux\") or sys.platform == \"android\":}" > $GCPP_ANDROID_PY
+           # debug
+           cat $GCPP_ANDROID_PY | grep "sys.platform.startswith(\"linux\")"
+
+           mkdir -p Android/Sdk && export ANDROID_HOME=Android/Sdk
+           yes | sdkmanager --licenses && sdkmanager --install "ndk;r23c"
+
+      - name: Build GDExtension
+        run: |
+          scons target=${{ matrix.target }} arch=${{ matrix.arch }} platform=android
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-midi-android-${{ matrix.target }}-${{ matrix.arch }}
+          path: project/addons/godot-midi/bin/android/
+          if-no-files-found: error
+
   build_windows:
     name: Build Windows
     runs-on: windows-latest
@@ -102,36 +170,3 @@ jobs:
           name: godot-midi-windows-${{ matrix.target }}-${{ matrix.arch }}
           path: project/addons/godot-midi/bin/windows/
           if-no-files-found: error
-
-  release:
-    name: Create Release
-    needs: [build_linux, build_windows]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download Linux artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: godot-midi-linux-*
-          path: project/addons/godot-midi/bin/linux/
-          merge-multiple: true
-
-      - name: Download Windows artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: godot-midi-windows-*
-          path: project/addons/godot-midi/bin/windows/
-          merge-multiple: true
-
-      - name: Remove non-addons files
-        run: |
-          find project -mindepth 1 -maxdepth 1 ! -name "addons" -exec rm -rf {} \;
-          
-      - name: Upload universal release zip
-        uses: actions/upload-artifact@v4
-        with:
-          name: godot-midi-universal
-          path: project/
-          retention-days: 1
