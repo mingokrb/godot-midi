@@ -104,11 +104,7 @@ jobs:
 
       - name: Setup Android and install NDK
         run: |
-           GCPP_ANDROID_PY=godot-cpp/tools/android.py
-           echo "${$(<$GCPP_ANDROID_PY)//sys.platform.startswith(\"linux\"):/sys.platform.startswith(\"linux\") or sys.platform == \"android\":}" > $GCPP_ANDROID_PY
-           # debug
-           cat $GCPP_ANDROID_PY | grep "sys.platform.startswith(\"linux\")"
-
+           #sed -i "s/sys.platform.startswith(\"linux\")/sys.platform.startswith(\"linux\") or sys.platform == \"android\"/" godot-cpp/tools/android.py
            mkdir -p Android/Sdk && export ANDROID_HOME=Android/Sdk
            yes | sdkmanager --licenses && sdkmanager --install "ndk;r23c"
 
