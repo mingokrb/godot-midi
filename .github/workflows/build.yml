@@ -108,7 +108,8 @@ jobs:
           mv cmdline-tools $ANDROID_HOME/cmdline-tools/latest
           export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
 
-          yes | sdkmanager --licenses && sdkmanager --install "ndk;r23c"
+          sdkmanager --list
+          yes | sdkmanager --licenses &> /dev/null && sdkmanager --install "ndk;r23c"
 
       - name: Build GDExtension
         run: |
